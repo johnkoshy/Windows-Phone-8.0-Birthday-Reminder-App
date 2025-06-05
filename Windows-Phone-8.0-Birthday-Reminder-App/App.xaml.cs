@@ -7,6 +7,8 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Windows_Phone_8._0_Birthday_Reminder_App.Resources;
+using Microsoft.Phone.Scheduler;
+using System.Linq; 
 
 namespace Windows_Phone_8._0_Birthday_Reminder_App
 {
@@ -57,16 +59,14 @@ namespace Windows_Phone_8._0_Birthday_Reminder_App
 
         }
 
-        // Code to execute when the application is launching (eg, from Start)
-        // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            CleanupTestReminders();
         }
 
-        // Code to execute when the application is activated (brought to foreground)
-        // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+            CleanupTestReminders();
         }
 
         // Code to execute when the application is deactivated (sent to background)
@@ -98,6 +98,37 @@ namespace Windows_Phone_8._0_Birthday_Reminder_App
             {
                 // An unhandled exception has occurred; break into the debugger
                 Debugger.Break();
+            }
+        }
+
+        private void CleanupTestReminders()
+        {
+            DebugListAllReminders();
+            try
+            {
+                var reminders = ScheduledActionService.GetActions<Reminder>();
+                foreach (var reminder in reminders.Where(r => r.Name.StartsWith("TEST_")))
+                {
+                    ScheduledActionService.Remove(reminder.Name);
+                }
+            }
+            catch { }
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugListAllReminders()
+        {
+            try
+            {
+                var existingReminders = ScheduledActionService.GetActions<Reminder>();
+                foreach (var r in existingReminders)
+                {
+                    Debug.WriteLine("Found reminder: " + r.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("DebugListAllReminders error: " + ex.Message);
             }
         }
 

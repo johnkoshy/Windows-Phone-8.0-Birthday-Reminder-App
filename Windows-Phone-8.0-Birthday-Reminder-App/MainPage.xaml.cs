@@ -111,17 +111,37 @@ namespace Windows_Phone_8._0_Birthday_Reminder_App
 
         private void AddTestReminder_Click(object sender, RoutedEventArgs e)
         {
-            var testReminder = new Reminder("TEST_REMINDER_123")
+            try
             {
-                Title = "TEST REMINDER",
-                Content = "This is a test notification",
-                BeginTime = DateTime.Now.AddMinutes(1),
-                ExpirationTime = DateTime.Now.AddMinutes(2),
-                RecurrenceType = RecurrenceInterval.None
-            };
+                string reminderName = "TEST_REMINDER_123";
 
-            ScheduledActionService.Add(testReminder);
-            MessageBox.Show("Test reminder added for 1 minute from now");
+                // Remove any existing reminder first
+                if (ScheduledActionService.Find(reminderName) != null)
+                {
+                    ScheduledActionService.Remove(reminderName);
+                }
+
+                var testReminder = new Reminder(reminderName)
+                {
+                    Title = "TEST REMINDER",
+                    Content = "This is a test notification",
+                    BeginTime = DateTime.Now.AddMinutes(1),
+                    ExpirationTime = DateTime.Now.AddMinutes(2),
+                    RecurrenceType = RecurrenceInterval.None,
+                    NavigationUri = new Uri("/MainPage.xaml", UriKind.Relative)
+                };
+
+                ScheduledActionService.Add(testReminder);
+                MessageBox.Show("Test reminder added for 1 minute from now");
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("General error: " + ex.Message);
+            }
         }
 
     }
