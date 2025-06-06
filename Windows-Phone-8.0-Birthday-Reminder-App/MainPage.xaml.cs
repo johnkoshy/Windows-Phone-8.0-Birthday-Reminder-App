@@ -7,6 +7,7 @@ using System.IO.IsolatedStorage;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Phone.Scheduler;
+using System.Diagnostics;
 
 namespace Windows_Phone_8._0_Birthday_Reminder_App
 {
@@ -88,25 +89,64 @@ namespace Windows_Phone_8._0_Birthday_Reminder_App
 }
         private void ScheduleReminder(Birthday birthday)
         {
-            string reminderName = "BirthdayReminder_" + birthday.Name;
+            // 1. Debug: Show the parsed date
+            MessageBox.Show(string.Format("Parsed date: {0}", birthday.Date));
+
+            // 2. Create safe reminder name
+            string reminderName = "BirthdayReminder_" + Uri.EscapeDataString(birthday.Name);
+
+            // 3. Check if reminder already exists (debug)
+            var exists = ScheduledActionService.Find(reminderName) != null;
+            MessageBox.Show("Reminder exists before removal: " + exists);
+
+            // Remove existing reminder if any
             ScheduledActionService.Remove(reminderName);
 
-            // TEST SETTINGS (1 minute from now)
-            DateTime testTime = DateTime.Now.AddMinutes(1);
-            DateTime testExpireTime = testTime.AddHours(1);
-
+            // Create new reminder
             var reminder = new Reminder(reminderName)
             {
-                Title = "BIRTHDAY REMINDER",
+                Title = "Birthday Reminder",
                 Content = string.Format("{0}'s birthday today!", birthday.Name),
-                BeginTime = testTime,
-                ExpirationTime = testExpireTime,
-                RecurrenceType = RecurrenceInterval.None, // Important for testing
+                BeginTime = new DateTime(DateTime.Now.Year, birthday.Date.Month, birthday.Date.Day, 8, 0, 0),
+                ExpirationTime = new DateTime(DateTime.Now.Year, birthday.Date.Month, birthday.Date.Day, 23, 59, 59),
+                RecurrenceType = RecurrenceInterval.Yearly,
                 NavigationUri = new Uri("/MainPage.xaml", UriKind.Relative)
             };
 
+            // 4. Handle past dates
+            if (reminder.BeginTime < DateTime.Now)
+            {
+                MessageBox.Show(string.Format(
+                    "Adjusting date from {0} to {1}",
+                    reminder.BeginTime,
+                    reminder.BeginTime.AddYears(1)));
+
+                reminder.BeginTime = reminder.BeginTime.AddYears(1);
+                reminder.ExpirationTime = reminder.ExpirationTime.AddYears(1);
+            }
+
+            // Debug: Show final reminder details
+            MessageBox.Show(string.Format(
+                "Final Reminder Details:\n" +
+                "Name: {0}\n" +
+                "Title: {1}\n" +
+                "Content: {2}\n" +
+                "Begin: {3}\n" +
+                "Expires: {4}\n" +
+                "Recurrence: {5}",
+                reminder.Name,
+                reminder.Title,
+                reminder.Content,
+                reminder.BeginTime,
+                reminder.ExpirationTime,
+                reminder.RecurrenceType));
+
+            // Add the reminder
             ScheduledActionService.Add(reminder);
-            MessageBox.Show(string.Format("Reminder set for {0} at {1}", birthday.Name, testTime));
+
+            // 5. Verify reminder was added
+            exists = ScheduledActionService.Find(reminderName) != null;
+            MessageBox.Show("Reminder exists after adding: " + exists);
         }
 
         private void AddTestReminder_Click(object sender, RoutedEventArgs e)
