@@ -10,6 +10,7 @@ Simple Interface: Intuitive design for easy navigation and management.
 
 Screenshots
 ![Windows Phone 8.0 Birthday Reminder App Main Screen](Screenshots/main.png)
+![Windows Phone 8.0 Birthday Reminder Test & Debug](Screenshots/test&debug.png)
 
 Requirements
 
