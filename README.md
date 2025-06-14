@@ -55,4 +55,4 @@ A simple yet elegant application for Windows Phone 8.0, designed to help users m
 Contributions are welcome! 🎉 Please submit a pull request or open an issue on GitHub for suggestions or bug reports.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
