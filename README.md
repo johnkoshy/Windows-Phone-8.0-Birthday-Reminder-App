@@ -45,11 +45,11 @@ A simple yet elegant application for Windows Phone 8.0, designed to help users m
 4. Pin the app to your home screen for live tile updates.
 
 ## Project Structure
-- MainPage.xaml: Main interface for viewing birthdays.
-- AddBirthdayPage.xaml: Page for adding new birthday entries.
-- Assets/: Contains app icons and tile images.
-- Screenshots/: Stores app screenshots.
-- Toolkit.Content/: Holds application bar icons for user interactions.
+- **MainPage.xaml**: Main interface for viewing birthdays.
+- **AddBirthdayPage.xaml**: Page for adding new birthday entries.
+- **Assets/**: Contains app icons and tile images.
+- **Screenshots/**: Stores app screenshots.
+- **Toolkit.Content/**: Holds application bar icons for user interactions.
 
 ## Contributing
 Contributions are welcome! 🎉 Please submit a pull request or open an issue on GitHub for suggestions or bug reports.
